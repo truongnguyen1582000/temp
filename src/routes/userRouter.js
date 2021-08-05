@@ -7,6 +7,11 @@ router.post('/signup', userController.signup);
 router.post('/login', userController.login);
 router.post('/refreshToken', userController.refreshToken);
 router.patch('/edit/:userId', authMiddleware, userController.editUser);
-router.get('forgotpassword');
+// router.get(
+//   '/sendPassword/:userId',
+//   authMiddleware,
+//   userController.sendPassword
+// );
+// router.patch('/resetPassword');
 
 module.exports = router;

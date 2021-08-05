@@ -3,17 +3,23 @@ const JWT = require('../utils/JWT');
 const User = require('../models/User');
 const RefToken = require('../models/RefreshToken');
 const checkAuthorization = require('../utils/checkAuthorization');
+const sendEmail = require('../utils/sendMail');
 
 module.exports.signup = async (req, res) => {
   try {
     const newUser = await User.create({
       ...req.body,
-      password: await bcrypt.hash(req.body.password, 12),
     });
 
     await RefToken.create({
       userId: newUser.id,
       refToken: JWT.getRefreshToken(newUser.id),
+    });
+
+    await sendEmail({
+      email: newUser.email,
+      subject: 'Your password',
+      message: `${req.body.password} is your password`,
     });
 
     res.status(200).json({
@@ -102,9 +108,19 @@ module.exports.editUser = async (req, res) => {
       });
     }
 
+    if (req.body.password) {
+      const user = await User.findById(req.user.id);
+      await sendEmail({
+        email: user.email,
+        subject: 'Your password',
+        message: `${req.body.password} is your password`,
+      });
+    }
+
     await User.findByIdAndUpdate(req.params.userId, {
       ...req.body,
     });
+
     res.status(200).json({
       status: 'success',
     });
@@ -115,3 +131,18 @@ module.exports.editUser = async (req, res) => {
     });
   }
 };
+
+// module.exports.sendPassword = async (req, res) => {
+//   try {
+//     const user = await User.findById(userId);
+
+//     res.status(200).json({
+//       msg: 'Send mail success',
+//     });
+//   } catch (err) {
+//     res.status(400).json({
+//       msg: 'Send mail error',
+//       errors: err,
+//     });
+//   }
+// };
