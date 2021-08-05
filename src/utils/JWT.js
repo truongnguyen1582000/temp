@@ -22,4 +22,11 @@ module.exports.getRefreshToken = (userId) => {
   return token;
 };
 
-module.exports.verifyToken = (jwt, secretKey) => {};
+module.exports.verifyToken = (token, secretKey) => {
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    req.user = decoded.user;
+  } catch (err) {
+    res.status(401).json({ msg: 'Token is invalid' });
+  }
+};
