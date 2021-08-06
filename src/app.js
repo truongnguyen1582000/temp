@@ -8,20 +8,18 @@ const PORT = process.env.PORT || 3000;
 const connectToDB = require('./config/connectToDB');
 connectToDB();
 
-// middleware / test
-const authMiddleware = require('./middlewares/auth');
-const User = require('./models/userModel');
-
-app.get('/', authMiddleware, async (req, res) => {
-  const user = await User.findById(req.user.id);
-  res.json({ user });
+app.get('/', async (req, res) => {
+  res.json('GUDBYE WORLD');
 });
 
 // ROUTE
 const userRoute = require('./routes/userRouter');
 const orderRoute = require('./routes/orderRoute');
+const productRoute = require('./routes/productRoute');
+
 app.use('/user', userRoute);
 app.use('/order', orderRoute);
+app.use('/product', productRoute);
 
 // handle undefined url
 app.all('*', (req, res, next) => {
