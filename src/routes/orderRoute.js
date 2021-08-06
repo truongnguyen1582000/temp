@@ -11,5 +11,6 @@ router.patch(
   authMiddleware,
   orderController.updateStatus
 );
+router.delete('/:orderId', authMiddleware, orderController.deleteOrder);
 
 module.exports = router;

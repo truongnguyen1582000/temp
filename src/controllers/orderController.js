@@ -10,7 +10,9 @@ module.exports.createOrder = async (req, res) => {
     });
     res.status(200).json({
       status: 'success',
-      newOrder,
+      data: {
+        newOrder,
+      },
     });
   } catch (err) {
     res.status(400).json({
@@ -46,7 +48,9 @@ module.exports.getOrder = async (req, res) => {
     res.status(200).json({
       status: 'success',
       numberOfOrder: orders.length,
-      orders,
+      data: {
+        orders,
+      },
     });
   } catch (err) {
     res.status(400).json({
@@ -98,11 +102,32 @@ module.exports.updateStatus = async (req, res) => {
       });
     }
 
-    await findByIdAndUpdate(
-      order.user,
+    await Order.findByIdAndUpdate(
+      req.params.orderId,
       { status: 'completed' },
       { runValidators: true }
     );
+
+    res.status(200).json({
+      status: 'success',
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      msg: err.message,
+    });
+  }
+};
+
+module.exports.deleteOrder = async (req, res) => {
+  try {
+    if (!(await isManager(req.user.id))) {
+      return res.status(403).json({
+        msg: 'Not authorization, just manager able to delete order',
+      });
+    }
+
+    await Order.findByIdAndDelete(req.params.orderId);
 
     res.status(200).json({
       status: 'success',
