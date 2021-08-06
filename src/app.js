@@ -8,9 +8,9 @@ const PORT = process.env.PORT || 3000;
 const connectToDB = require('./config/connectToDB');
 connectToDB();
 
-// middleware
+// middleware / test
 const authMiddleware = require('./middlewares/auth');
-const User = require('./models/User');
+const User = require('./models/userModel');
 
 app.get('/', authMiddleware, async (req, res) => {
   const user = await User.findById(req.user.id);
@@ -19,7 +19,16 @@ app.get('/', authMiddleware, async (req, res) => {
 
 // ROUTE
 const userRoute = require('./routes/userRouter');
+const orderRoute = require('./routes/orderRoute');
 app.use('/user', userRoute);
+app.use('/order', orderRoute);
+
+// handle undefined url
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    msg: `Can't find ${req.originalUrl} on this server!`,
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`);

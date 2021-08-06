@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const JWT = require('../utils/JWT');
-const User = require('../models/User');
-const RefToken = require('../models/RefreshToken');
+const User = require('../models/userModel');
+const RefToken = require('../models/refreshTokenModel');
 const checkAuthorization = require('../utils/checkAuthorization');
 const sendEmail = require('../utils/sendMail');
 
@@ -36,7 +36,7 @@ module.exports.signup = async (req, res) => {
     }
     res.status(400).json({
       status: 'fail',
-      msg: err,
+      msg: err.message,
     });
   }
 };
@@ -68,7 +68,7 @@ module.exports.login = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      msg: err,
+      msg: err.message,
     });
   }
 };
@@ -95,7 +95,7 @@ module.exports.refreshToken = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      msg: err,
+      msg: err.message,
     });
   }
 };
@@ -127,7 +127,7 @@ module.exports.editUser = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      msg: err,
+      msg: err.message,
     });
   }
 };

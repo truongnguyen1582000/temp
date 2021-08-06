@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
     required: true,
     minLength: [6, 'Password must be at least 6 characters'],
   },
-  roll: {
+  role: {
     type: String,
     enum: ['manager', 'employee'],
     default: 'employee',
@@ -27,11 +27,6 @@ const userSchema = mongoose.Schema({
 });
 
 userSchema.pre('save', async function (next) {
-  this.password = await bcrypt.hash(this.password, 12);
-  next();
-});
-
-userSchema.pre('findOneAndUpdate', async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
