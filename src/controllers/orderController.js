@@ -1,4 +1,6 @@
 const Order = require('../models/orderModel');
+const isManager = require('../utils/isManager');
+const checkAuthorization = require('../utils/checkAuthorization');
 
 module.exports.createOrder = async (req, res) => {
   try {
@@ -59,15 +61,52 @@ module.exports.updateOrder = async (req, res) => {
     const order = await Order.findById(req.params.orderId);
 
     if (
-      !checkAuthorization(req.user.id, order.user) ||
-      !isManager(order.user)
+      !checkAuthorization(req.user.id, order.user) &&
+      !(await isManager(req.user.id))
     ) {
       return res.status(403).json({
         msg: 'Not authorization',
       });
     }
 
-    res.json('ok');
+    await Order.findByIdAndUpdate(
+      req.params.orderId,
+      { ...req.body },
+      { runValidators: true }
+    );
+
+    res.status(200).json({
+      status: 'success',
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      msg: err.message,
+    });
+  }
+};
+module.exports.updateStatus = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.orderId);
+
+    if (
+      !checkAuthorization(req.user.id, order.user) &&
+      !(await isManager(req.user.id))
+    ) {
+      return res.status(403).json({
+        msg: 'Not authorization',
+      });
+    }
+
+    await findByIdAndUpdate(
+      order.user,
+      { status: 'completed' },
+      { runValidators: true }
+    );
+
+    res.status(200).json({
+      status: 'success',
+    });
   } catch (err) {
     res.status(400).json({
       status: 'fail',

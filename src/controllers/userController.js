@@ -117,9 +117,13 @@ module.exports.editUser = async (req, res) => {
       });
     }
 
-    await User.findByIdAndUpdate(req.params.userId, {
-      ...req.body,
-    });
+    await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        ...req.body,
+      },
+      { runValidators: true }
+    );
 
     res.status(200).json({
       status: 'success',

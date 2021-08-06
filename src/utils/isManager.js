@@ -1,4 +1,5 @@
-module.export = async (userId) => {
+const User = require('../models/userModel');
+module.exports = async (userId) => {
   try {
     const user = await User.findById(userId);
     return user.role === 'manager';
